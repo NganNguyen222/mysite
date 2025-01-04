@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[show edit update destroy]
-
+  allow_unauthenticated_access only: %i[ index show ]
+  before_action :set_product, only: %i[ show edit update destroy ]
 
   def index
     @products = Product.all
@@ -15,12 +15,14 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
+    @product.id = SecureRandom.uuid # Đặt UUID trước khi lưu
     if @product.save
-      redirect_to @product
+      redirect_to products_path, notice: "Sản phẩm đã được tạo"
     else
       render :new, status: :unprocessable_entity
     end
   end
+
 
   def edit
   end
@@ -39,13 +41,11 @@ class ProductsController < ApplicationController
   end
 
   def set_product
-    if params[:id] == "new"
-      @product = Product.new
-    else
-      @product = Product.find(params[:id])
-    end
+    @product = Product.find(params[:id])
+  end
 
+  private
     def product_params
-      params.require(:product).permit(:name)
+      params.expect(product: [ :name, :description, :featured_image, :inventory_count ])
     end
 end

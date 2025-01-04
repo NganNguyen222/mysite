@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html>
+  <body>
+    <nav>
+      <%= link_to "Home", root_path %>
+      <%= button_to "Log out", session_path, method: :delete if authenticated? %>
+    </nav>
+
+    <main>
+      <%= yield %>
+    </main>
+  </body>
   <head>
     <title><%= content_for(:title) || "Shop N Ngan Ng" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
